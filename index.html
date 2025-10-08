@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali's Gift Ideas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .category {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .category-title {
+            font-size: 1.4em;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .item {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .item.claimed {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 3em;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-size: 1.05em;
+        }
+
+        .item-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .item-link:hover {
+            text-decoration: underline;
+        }
+
+        .claim-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .claim-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .claim-btn:hover {
+            background: #5568d3;
+        }
+
+        .claim-btn.claimed-btn {
+            background: #48bb78;
+        }
+
+        .claim-btn.claimed-btn:hover {
+            background: #38a169;
+        }
+
+        .claimed-by {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.9em;
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .unclaim-btn {
+            background: #fc8181;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        .unclaim-btn:hover {
+            background: #f56565;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎁 Ali's Gift Ideas</h1>
+
+        <div class="category">
+            <h2 class="category-title">📚 Livres - Français et/ou Anglais</h2>
+            <div class="items-grid">
+                <div class="item" data-item="0">
+                    <div class="item-image">📚</div>
+                    <div class="item-name">Livres "animés" (pop-up, etc.)</div>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(0)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2 class="category-title">🧸 Jouets</h2>
+            <div class="items-grid">
+                <div class="item" data-item="1">
+                    <div class="item-image">🎭</div>
+                    <div class="item-name">Jouets "jeu de rôle" (nourriture, métier, etc.)</div>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(1)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+
+                <div class="item" data-item="2">
+                    <div class="item-image">🦁</div>
+                    <div class="item-name">Livre avec sons pour apprendre les animaux</div>
+                    <a href="#" class="item-link" target="_blank">LeapFrog 100 Animals Book</a>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(2)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+
+                <div class="item" data-item="3">
+                    <div class="item-image">📖</div>
+                    <div class="item-name">Livre avec sons pour apprendre les mots</div>
+                    <a href="#" class="item-link" target="_blank">LeapFrog Learning Friends 100 Words Book</a>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(3)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+
+                <div class="item" data-item="4">
+                    <div class="item-image">⭐</div>
+                    <div class="item-name">Trieur de formes basiques (étoile, cercle, triangle...)</div>
+                    <a href="#" class="item-link" target="_blank">John Lewis Shape Sorter Set</a>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(4)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+
+                <div class="item" data-item="5">
+                    <div class="item-image">🚗</div>
+                    <div class="item-name">Rampes simples pour petites voitures</div>
+                    <a href="#" class="item-link" target="_blank">Just Bee Kids - Wooden Car Ramp | Mabel & Fox</a>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(5)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+
+                <div class="item" data-item="6">
+                    <div class="item-image">🎨</div>
+                    <div class="item-name">Jeu d'association de couleurs, planche sensorielle</div>
+                    <a href="#" class="item-link" target="_blank">Bigjigs Toys Sensory Board</a>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(6)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+
+                <div class="item" data-item="7">
+                    <div class="item-image">🧩</div>
+                    <div class="item-name">Puzzle avec sons</div>
+                    <a href="https://www.melissaanddoug.com/products/farm-sounds-puzzle" class="item-link" target="_blank">Voir le produit →</a>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(7)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+
+                <div class="item" data-item="8">
+                    <div class="item-image">🦊</div>
+                    <div class="item-name">Jouets à empiler</div>
+                    <a href="#" class="item-link" target="_blank">Woodland Stacking Forest Animals & Bag</a>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(8)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+
+                <div class="item" data-item="9">
+                    <div class="item-image">🍄</div>
+                    <div class="item-name">Toadstool Play Set</div>
+                    <a href="#" class="item-link" target="_blank">Toadstool Soft Playset | JoJo Maman Bébé</a>
+                    <div class="claim-section">
+                        <button class="claim-btn" onclick="claimItem(9)">Réserver ce cadeau</button>
+                        <span class="claimed-by" style="display: none;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load claimed items from localStorage
+        function loadClaims() {
+            const claims = JSON.parse(localStorage.getItem('giftClaims') || '{}');
+            Object.keys(claims).forEach(itemId => {
+                updateItemDisplay(parseInt(itemId), claims[itemId]);
+            });
+        }
+
+        // Claim an item
+        function claimItem(itemId) {
+            const name = prompt("Quel est votre nom ?");
+            if (name && name.trim()) {
+                const claims = JSON.parse(localStorage.getItem('giftClaims') || '{}');
+                claims[itemId] = name.trim();
+                localStorage.setItem('giftClaims', JSON.stringify(claims));
+                updateItemDisplay(itemId, name.trim());
+            }
+        }
+
+        // Unclaim an item
+        function unclaimItem(itemId) {
+            if (confirm("Voulez-vous annuler cette réservation ?")) {
+                const claims = JSON.parse(localStorage.getItem('giftClaims') || '{}');
+                delete claims[itemId];
+                localStorage.setItem('giftClaims', JSON.stringify(claims));
+                updateItemDisplay(itemId, null);
+            }
+        }
+
+        // Update item display
+        function updateItemDisplay(itemId, claimedBy) {
+            const item = document.querySelector(`[data-item="${itemId}"]`);
+            const button = item.querySelector('.claim-btn');
+            const claimedSpan = item.querySelector('.claimed-by');
+
+            if (claimedBy) {
+                item.classList.add('claimed');
+                button.textContent = 'Réservé';
+                button.classList.add('claimed-btn');
+                button.onclick = null;
+
+                claimedSpan.textContent = `par ${claimedBy}`;
+                claimedSpan.style.display = 'inline';
+
+                // Add unclaim button
+                let unclaimBtn = item.querySelector('.unclaim-btn');
+                if (!unclaimBtn) {
+                    unclaimBtn = document.createElement('button');
+                    unclaimBtn.className = 'unclaim-btn';
+                    unclaimBtn.textContent = 'Annuler';
+                    unclaimBtn.onclick = () => unclaimItem(itemId);
+                    claimedSpan.after(unclaimBtn);
+                }
+            } else {
+                item.classList.remove('claimed');
+                button.textContent = 'Réserver ce cadeau';
+                button.classList.remove('claimed-btn');
+                button.onclick = () => claimItem(itemId);
+
+                claimedSpan.style.display = 'none';
+                claimedSpan.textContent = '';
+
+                const unclaimBtn = item.querySelector('.unclaim-btn');
+                if (unclaimBtn) unclaimBtn.remove();
+            }
+        }
+
+        // Load claims on page load
+        loadClaims();
+    </script>
+</body>
+</html>
