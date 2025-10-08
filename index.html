@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idées de KDO pour Aliénor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .section-intro {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #444;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .item {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .item.claimed {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            background: #e0e0e0;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-size: 1.05em;
+            line-height: 1.3;
+        }
+
+        .item-note {
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #fff9e6;
+            border-radius: 4px;
+            border-left: 3px solid #ffd700;
+        }
+
+        .item-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .item-link:hover {
+            text-decoration: underline;
+        }
+
+        .claim-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .claim-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .claim-btn:hover {
+            background: #5568d3;
+        }
+
+        .claim-btn.claimed-btn {
+            background: #48bb78;
+        }
+
+        .claim-btn.claimed-btn:hover {
+            background: #38a169;
+        }
+
+        .claimed-by {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.9em;
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .unclaim-btn {
+            background: #fc8181;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        .unclaim-btn:hover {
+            background: #f56565;
+        }
+
+        /* Custom Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .modal-select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .modal-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modal-btn-cancel {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #d0d0d0;
+        }
+
+        .modal-btn-confirm {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #5568d3;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎁 Idées de KDO pour Aliénor</h1>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('idees')">💡 Idées & Exemples</button>
+            <button class="tab-btn" onclick="switchTab('specifique')">🎯 Articles Spécifiques</button>
+        </div>
+
+        <!-- Tab: Articles Spécifiques -->
+        <div id="tab-specifique" class="tab-content">
+            <div class="section">
+                <div class="section-intro">
+                    <strong>🎯 Articles Spécifiques</strong> – Ces articles doivent être exactement ceux listés ci-dessous.
+                </div>
+                <div class="items-grid">
+                    <div class="item" data-item="0">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xV93Ny-0fnrF7sKsO5H0URgoO6rxTInHwTNN9-TOLikP45BGFaJxUxSlR_Mmq_YYj46h204Ccdt-6EhFiQVytvuvnmRLrpz1clWd0qfXTCfW75MS_Ro65YyPlhdbWaUfVJdTNs5lDd982CXpTLzyAJvvljaYzJBEUHvQUyXif7fYD1pVb53C8mbl-p3ULURKv8vs7A87E207z0PR0O46ut7_gfxU5dj5kvBt_spZWcU_A=s300-w300-h300-s" alt="Puzzle engrenages" class="item-image">
+                        <div class="item-name">Puzzle engrenages</div>
+                        <a href="https://letoyvan.co.uk/collections/1-toys/products/gears-cogs-set" class="item-link" target="_blank">Voir le produit →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(0)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Idées & Exemples -->
+        <div id="tab-idees" class="tab-content active">
+            <div class="section">
+                <div class="section-intro">
+                    <strong>💡 Idées & Exemples</strong> – Tout produit similaire convient ! Les liens sont fournis comme exemples uniquement.
+                </div>
+                <div class="items-grid">
+                    <!-- Item 1 -->
+                    <div class="item" data-item="1">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xVMWw51jREYSBkAtlRs5O7uCattoUCCNNys3cUHXk1J2HDRVBZvQHF6WtDnSQyGpQ5DPa0o0FC6jKLxi9jh6sK_l0IxfqBReh29p0pvxOat-vr82ep1U5n-g0R_Xs-BXUcQXPEMoMzdYPJRtK6DCyigEvUIZqe2k4X2vKeelQ=s300-w300-h300-s" alt="Livres animés" class="item-image">
+                        <div class="item-name">Livres "animés" (pop-up, etc.)</div>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(1)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="item" data-item="2">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xVMe9OkbfHU-mDE-McKGzEjpQcJV_d3wEEpdPM6H__S3HYkPeXU-WzyhmGfs0jjR2s_-sAArcKq-46VZ1_xH1NWF8v4XRgYPhILGv10x2c1EJkpwZMbpGllvNxTek9tbj2ECc1y3Iq5w4TOXieLs8aoFxfaFHHGNYfSxG38cAlvc-5QodNq8gkmjme9Pc6cRsw2q37uXXCM_8NUEEfuscV8ig=s300-w300-h300-s" alt="Jouets jeu de rôle" class="item-image">
+                        <div class="item-name">Jouets "jeu de rôle" (nourriture, métier, etc.)</div>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(2)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="item" data-item="3">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xWsnQzr1KiXJGPaM2CREqkg4qOLTv12jZIVK4cGlnxNEUWWRniiIDpq-EJv4LvB3mvCqi0imxMjgatxdxb5TSl9-26T0WBwhHY7-h8gyklW4Bh8zmly_asGoP0DoaU0LJf_6Lyq5CgTXRrZllX-jxxfP4ZWto6hcWK8s08qTYw8MpUP9UVK5QpCRdvc=s300-w300-h300-s" alt="Livre avec sons animaux" class="item-image">
+                        <div class="item-name">Livre avec sons pour apprendre les animaux</div>
+                        <a href="https://www.johnlewis.com/leapfrog-100-animals-book/p5061421" class="item-link" target="_blank">Voir un exemple →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(3)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="item" data-item="4">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xXBuEBKhu58AmAF-N1yZMsxi9nG-LfwWzY2qCro1XFpl3tiCxuZ8Savq7SfWvEflPF1dNBN_4qYwGiLVJbyqt1jd3E6smv2s7A5zHG8vhN2TQY7euRUUdEceRg0izjTd2cjKsy0yBMaIHVpuRWW8nDmqb_qESJQMqVMZ2-L7XRMTBfNbkTqyJVeIbg=s300-w300-h300-s" alt="Livre avec sons mots" class="item-image">
+                        <div class="item-name">Livre avec sons pour apprendre les mots</div>
+                        <a href="https://www.johnlewis.com/leapfrog-learning-friends-100-words-book/p3695695" class="item-link" target="_blank">Voir un exemple →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(4)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 5 -->
+                    <div class="item" data-item="5">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xXXxu2F_sEAtYujvXTte8jsO_1_t34F9TrQ3lzmqcBMfyoZ0-Wll9YoaCM8bbCgToRyQGSqZ2eFlDV64mAzrvE1bDySYZwdk9FBi0ovoQ4gpEbUIY4v4v4-xnhbQH8zagiihRgYAWbtJ9-cwPl9LiXw9wrHNGvKyZqIS_xzC13wmuhXB-r8CVJCvsBW=s300-w300-h300-s" alt="Trieur de formes" class="item-image">
+                        <div class="item-name">Trieur de formes basiques (étoile, cercle, triangle...)</div>
+                        <a href="https://www.johnlewis.com/john-lewis-shape-sorter-set/p112356437" class="item-link" target="_blank">Voir un exemple →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(5)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 6 -->
+                    <div class="item" data-item="6">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xWnktC0qj8TnuIkzUBmNcsZKljMHzRekr0zrJTKn65-8XHoNsOvS2Hr4TWZ5bzydTEUlbU1W-u6NWNh1kk5h6Wa4rDksVveT1y8GrT4En8OXPEGYVzupf8f7VxnRkAgzDfqpA861jIx9Htx6hHtMr27B78up-And0hYOCabpYagM2ZSChSg1Yy7X_ABqL9OdD7-RNBfKACH0g8nw9L882xe5n3VDlTu4jFnVfo5=s300-w300-h300-s" alt="Rampes voitures" class="item-image">
+                        <div class="item-name">Rampes simples pour petites voitures</div>
+                        <a href="https://www.mabelandfox.com/products/just-bee-kids-wooden-car-ramp?variant=45576596291811" class="item-link" target="_blank">Voir un exemple →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(6)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 7 -->
+                    <div class="item" data-item="7">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xUE3YjIr87yAQiMJ4D7gQJLVSP6bKntjRmOTZ-KDFX-xf0L4857gjU2y8bvJkmjVJaqgk-PGgJVsLZjvU9tMLgWwZilQ5j7wfDEGeeXcXev7knBYcixIUckPNKQte8-GB6lyOBeQVNGK43CDl9V4VsM3XAFfS-kR3_YoF3kX31525LYKCwr_gQlW0w=s300-w300-h300-s" alt="Planche sensorielle" class="item-image">
+                        <div class="item-name">Jeu d'association de couleurs, planche sensorielle</div>
+                        <a href="https://www.johnlewis.com/bigjigs-toys-sensory-board/p114191899" class="item-link" target="_blank">Voir un exemple →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(7)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 8 -->
+                    <div class="item" data-item="8">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xWPXS2WWk6VOrgYeWAHyQGhtpbPo1Tvqccz1i3-UzaCclHq5PVAEDEqJwiYO2LQgC0jV8lHr3x7jq1KrEqClbCR0ocA0b1pqZRMF0ZCDjiw5gDdbWspoL2oYRvRyLicRuu0O427QkevZcdeWdkpZmTc4ewkWxsIuo5IgnzwD8IAQ9FWcpvx1kVzC14HuQukOml_X3U=s300-w300-h300-s" alt="Puzzle avec sons" class="item-image">
+                        <div class="item-name">Puzzle avec sons</div>
+                        <a href="https://www.melissaanddoug.com/products/farm-sounds-puzzle" class="item-link" target="_blank">Voir un exemple →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(8)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 9 -->
+                    <div class="item" data-item="9">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xVK00ZeTvqKlK5WWWg1Gwsx1dQQDxwRA8GZ4eXACkaLmqzvz0FadV3c8hHItCfCZPkN0qsD_u1alFFNvoHWMy-CUiHPUup3V2lLeSnzSb_QgFgyCo21n0nQjqccbLKArvcTB9BoDCvWWdZhCUwM6Fed27dST0wviRtzUigHhkhJPreGYCkstN6XOVSJg88urutiq78MRdNQcUs4oueGyKfIv1SQ0QoY3hISKFW6tPdDFNd74V5CSJxZbgl1CFnEs8cvYliv7Ts5DjC93j0YcohCcqhCCb1xyQ=s300-w300-h300-s" alt="Jouets à empiler" class="item-image">
+                        <div class="item-name">Jouets à empiler</div>
+                        <a href="https://letoyvan.co.uk/collections/1-toys/products/forest-stacker-bag" class="item-link" target="_blank">Voir un exemple →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(9)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 10 -->
+                    <div class="item" data-item="10">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xUQOWjAlDvUvoTKPzL9CSniGjz75JwnUlw4xVlddJH4_ON1VX7FXgeEyAwHagF--r9i5p6muBneLyU6Pa-ldLCrWT78-bRs4dbQtFn0sHrUIJ54VIpzJhEOA33obJOLIhIY2w=s300-w300-h300-s" alt="Plateau avec rebords" class="item-image">
+                        <div class="item-name">Plateau avec rebords et support</div>
+                        <a href="https://www.amazon.co.uk/Easy-Shopping-Mixing-Plastic-Playing/dp/B0DTV5R5Y5" class="item-link" target="_blank">Voir un exemple →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(10)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 11 -->
+                    <div class="item" data-item="11">
+                        <img src="https://lh3.googleusercontent.com/docsubipk/AP9E6xUdJw5qeBZrONwbDnp0KrYDhtpnCRYGfr7R2oxJNmbOpMaCH6qb9w0ONoutbiAtKVu2TI03pOYxOHzRpNAVupj-VjHn4Jh7C-6-huwY_TKg8ly5OaK6Zik9Fw-DXcwpefmbMXFGhysF-zXE1pffXvNRdA7PiqgN33RUDl0b5rn98piHuKy-s6gN6bYgNYWTEvuGw5gftJ_47PQ=s300-w300-h300-s" alt="Toadstool Play Set" class="item-image">
+                        <div class="item-name">Toadstool Play Set</div>
+                        <a href="https://www.jojomamanbebe.co.uk/style/st772355/n40735#n40735" class="item-link" target="_blank">Voir un exemple →</a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(11)">J'lui offre ça !</button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Claim Modal -->
+    <div class="modal-overlay" id="claimModal">
+        <div class="modal">
+            <div class="modal-title">Qui réserve ce cadeau ?</div>
+            <select class="modal-select" id="nameSelect">
+                <option value="">-- Choisissez votre nom --</option>
+                <option value="Oliv & Gé">Oliv & Gé</option>
+                <option value="Odic' & Sophie">Odic' & Sophie</option>
+                <option value="Adelou">Adelou</option>
+                <option value="Max">Max</option>
+                <option value="Paca">Paca</option>
+            </select>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Annuler</button>
+                <button class="modal-btn modal-btn-confirm" onclick="confirmClaim()">Réserver</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unclaim Modal -->
+    <div class="modal-overlay" id="unclaimModal">
+        <div class="modal">
+            <div class="modal-title">Annuler cette réservation ?</div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeUnclaimModal()">Non, garder</button>
+                <button class="modal-btn modal-btn-confirm" onclick="confirmUnclaim()">Oui, annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbynABl2-VlXiWuFiCYoAh4Qrm4hCiaxbEbzIhU5CiBtiJV-MmQ9YugpQ6AwQXZZfyeYBA/exec';
+        let currentItemId = null;
+        let currentUnclaimItemId = null;
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Modal functions
+        function claimItem(itemId) {
+            currentItemId = itemId;
+            document.getElementById('claimModal').classList.add('active');
+            document.getElementById('nameSelect').value = '';
+        }
+
+        function closeModal() {
+            document.getElementById('claimModal').classList.remove('active');
+            currentItemId = null;
+        }
+
+        async function confirmClaim() {
+            const select = document.getElementById('nameSelect');
+            const name = select.value;
+
+            if (name) {
+                try {
+                    await fetch(SHEET_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            itemId: currentItemId,
+                            claimedBy: name
+                        })
+                    });
+                    updateItemDisplay(currentItemId, name);
+                    closeModal();
+                } catch (error) {
+                    console.error('Error claiming item:', error);
+                    alert('Erreur lors de la réservation. Veuillez réessayer.');
+                }
+            } else {
+                select.focus();
+            }
+        }
+
+        // Close modal on overlay click
+        document.getElementById('claimModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Load claimed items from Google Sheets
+        async function loadClaims() {
+            try {
+                const response = await fetch(SHEET_API_URL);
+                const claims = await response.json();
+                Object.keys(claims).forEach(itemId => {
+                    updateItemDisplay(parseInt(itemId), claims[itemId]);
+                });
+            } catch (error) {
+                console.error('Error loading claims:', error);
+            }
+        }
+
+        // Unclaim an item - show modal
+        function unclaimItem(itemId) {
+            currentUnclaimItemId = itemId;
+            document.getElementById('unclaimModal').classList.add('active');
+        }
+
+        // Close unclaim modal
+        function closeUnclaimModal() {
+            document.getElementById('unclaimModal').classList.remove('active');
+            currentUnclaimItemId = null;
+        }
+
+        // Confirm unclaim
+        async function confirmUnclaim() {
+            if (currentUnclaimItemId !== null) {
+                try {
+                    await fetch(SHEET_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            itemId: currentUnclaimItemId,
+                            claimedBy: null
+                        })
+                    });
+                    updateItemDisplay(currentUnclaimItemId, null);
+                    closeUnclaimModal();
+                } catch (error) {
+                    console.error('Error unclaiming item:', error);
+                    alert('Erreur lors de l\'annulation. Veuillez réessayer.');
+                }
+            }
+        }
+
+        // Close unclaim modal on overlay click
+        document.getElementById('unclaimModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeUnclaimModal();
+            }
+        });
+
+        // Update item display
+        function updateItemDisplay(itemId, claimedBy) {
+            const item = document.querySelector(`[data-item="${itemId}"]`);
+            if (!item) return;
+
+            const button = item.querySelector('.claim-btn');
+            const claimedSpan = item.querySelector('.claimed-by');
+
+            if (claimedBy) {
+                item.classList.add('claimed');
+                button.textContent = 'Réservé';
+                button.classList.add('claimed-btn');
+                button.onclick = null;
+
+                claimedSpan.textContent = `par ${claimedBy}`;
+                claimedSpan.style.display = 'inline';
+
+                // Add unclaim button
+                let unclaimBtn = item.querySelector('.unclaim-btn');
+                if (!unclaimBtn) {
+                    unclaimBtn = document.createElement('button');
+                    unclaimBtn.className = 'unclaim-btn';
+                    unclaimBtn.textContent = 'Annuler';
+                    unclaimBtn.onclick = () => unclaimItem(itemId);
+                    claimedSpan.after(unclaimBtn);
+                }
+            } else {
+                item.classList.remove('claimed');
+                button.textContent = 'J\'lui offre ça !';
+                button.classList.remove('claimed-btn');
+                button.onclick = () => claimItem(itemId);
+
+                claimedSpan.style.display = 'none';
+                claimedSpan.textContent = '';
+
+                const unclaimBtn = item.querySelector('.unclaim-btn');
+                if (unclaimBtn) unclaimBtn.remove();
+            }
+        }
+
+        // Load claims on page load
+        loadClaims();
+    </script>
+</body>
+</html>
