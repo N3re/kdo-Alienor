@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Ideas for Aliénor | Idées de KDO pour Aliénor</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .section-intro {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #444;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .item {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .item:active {
+            transform: scale(0.98);
+        }
+
+        .item.claimed {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            background: #e0e0e0;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-size: 1.05em;
+            line-height: 1.3;
+        }
+
+        .item-note {
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #fff9e6;
+            border-radius: 4px;
+            border-left: 3px solid #ffd700;
+        }
+
+        .item-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .item-link:hover {
+            text-decoration: underline;
+        }
+
+        .claim-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .claim-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .claim-btn:hover {
+            background: #5568d3;
+        }
+
+        .claim-btn:active {
+            transform: scale(0.95);
+        }
+
+        .claim-btn.claimed-btn {
+            background: #48bb78;
+        }
+
+        .claim-btn.claimed-btn:hover {
+            background: #38a169;
+        }
+
+        .claimed-by {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.9em;
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .unclaim-btn {
+            background: #fc8181;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        .unclaim-btn:hover {
+            background: #f56565;
+        }
+
+        /* Custom Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .modal-select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .modal-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modal-btn-cancel {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #d0d0d0;
+        }
+
+        .modal-btn-confirm {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #5568d3;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85em;
+        }
+
+        .footer a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            background: white;
+            border-radius: 25px;
+            padding: 8px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+            min-width: 40px;
+        }
+
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: #f0f0f0;
+        }
+
+        /* Decorative Stickers */
+        .stickers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1500;
+        }
+
+        .sticker {
+            position: absolute;
+            width: 200px;
+            height: auto;
+            max-width: 200px;
+            filter: drop-shadow(2px 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .sticker-1 {
+            top: 145px;
+            left: 10px;
+            transform: rotate(-18deg);
+            width: 160px;
+        }
+
+        .sticker-2 {
+            top: 260px;
+            right: 10px;
+            transform: rotate(25deg);
+        }
+
+        .sticker-3 {
+            top: 715px;
+            right: 10px;
+            transform: rotate(-12deg);
+        }
+
+        .sticker-4 {
+            top: 420px;
+            left: 10px;
+            transform: rotate(-5deg);
+        }
+
+        @media (max-width: 768px) {
+            .sticker {
+                width: 150px;
+            }
+
+            .sticker-1 {
+                top: 120px;
+                left: 5px;
+                width: 120px;
+            }
+
+            .sticker-2 {
+                top: 230px;
+                right: 5px;
+            }
+
+            .sticker-3 {
+                top: 715px;
+                right: 5px;
+            }
+
+            .sticker-4 {
+                top: 380px;
+                left: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sticker {
+                width: 120px;
+            }
+
+            .sticker-1 {
+                top: 110px;
+                left: 5px;
+                width: 100px;
+            }
+
+            .sticker-2 {
+                top: 210px;
+                right: 5px;
+            }
+
+            .sticker-3 {
+                top: 665px;
+                right: 5px;
+            }
+
+            .sticker-4 {
+                top: 350px;
+                left: 5px;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(102, 126, 234, 0.2);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.6em;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative Stickers -->
+    <div class="stickers">
+        <img src="stickers/bilingue.png" alt="" class="sticker sticker-1">
+        <img src="stickers/princess.png" alt="" class="sticker sticker-2">
+        <img src="stickers/peppa.png" alt="" class="sticker sticker-3">
+        <img src="stickers/educatif.png" alt="" class="sticker sticker-4">
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container">
+        <!-- Language Toggle -->
+        <div style="text-align: right; margin-bottom: 10px;">
+            <div class="lang-toggle" style="position: relative; display: inline-flex; top: 0; right: 0;">
+                <button class="lang-btn active" onclick="setLanguage('fr')" style="flex: 1;">FR</button>
+                <button class="lang-btn" onclick="setLanguage('en')" style="flex: 1;">EN</button>
+            </div>
+        </div>
+
+        <h1>
+            <span class="lang-fr">🎁 Idées de KDO pour Aliénor</span>
+            <span class="lang-en" style="display: none;">🎁 Gift Ideas for Aliénor</span>
+        </h1>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('idees')">
+                <span class="lang-fr">💡 Idées & Exemples</span>
+                <span class="lang-en" style="display: none;">💡 Ideas & Examples</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('specifique')">
+                <span class="lang-fr">🎯 Articles Spécifiques</span>
+                <span class="lang-en" style="display: none;">🎯 Specific Items</span>
+            </button>
+        </div>
+
+        <!-- Tab: Articles Spécifiques -->
+        <div id="tab-specifique" class="tab-content">
+            <div class="section">
+                <div class="section-intro">
+                    <strong class="lang-fr">🎯 Articles Spécifiques</strong>
+                    <strong class="lang-en" style="display: none;">🎯 Specific Items</strong>
+                    <span class="lang-fr"> – Ces articles doivent être exactement ceux listés ci-dessous.</span>
+                    <span class="lang-en" style="display: none;"> – These must be the exact items listed below.</span>
+                </div>
+                <div class="items-grid">
+                    <div class="item" data-item="0">
+                        <img src="images/PL095-Gears-and-Cogs-Wooden-Puzzle-Baby-Toddler-Montessori-Game-Flowers-_1.jpg" alt="Gears & Cogs Puzzle" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Puzzle engrenages</span>
+                            <span class="lang-en" style="display: none;">Gears & Cogs Set (Cog puzzle)</span>
+                        </div>
+                        <a href="https://letoyvan.co.uk/collections/1-toys/products/gears-cogs-set" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir le produit →</span>
+                            <span class="lang-en" style="display: none;">View product →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(0)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Idées & Exemples -->
+        <div id="tab-idees" class="tab-content active">
+            <div class="section">
+                <div class="section-intro">
+                    <strong class="lang-fr">💡 Idées & Exemples</strong>
+                    <strong class="lang-en" style="display: none;">💡 Ideas & Examples</strong>
+                    <span class="lang-fr"> – Tout produit similaire convient ! Les liens sont fournis comme exemples uniquement.</span>
+                    <span class="lang-en" style="display: none;"> – Any similar product works! Links are examples only.</span>
+                </div>
+                <div class="items-grid">
+                    <!-- BOOKS GROUP -->
+                    <!-- Item 1 -->
+                    <div class="item" data-item="1">
+                        <img src="images/popup.jpg" alt="Pop-up books" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Livres "animés" (pop-up, etc.)</span>
+                            <span class="lang-en" style="display: none;">Pop-up / flap / board books</span>
+                        </div>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(1)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="item" data-item="3">
+                        <img src="images/livre son animaux.jpeg" alt="LeapFrog 100 Animals Book" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Livre avec sons pour apprendre les animaux</span>
+                            <span class="lang-en" style="display: none;">LeapFrog 100 Animals Book</span>
+                        </div>
+                        <div class="item-note">
+                            <span class="lang-fr">Les produits en exemple sont bilingues !</span>
+                            <span class="lang-en" style="display: none;">Example products are bilingual!</span>
+                        </div>
+                        <a href="https://www.johnlewis.com/leapfrog-100-animals-book/p5061421" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(3)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="item" data-item="4">
+                        <img src="images/livres sons.jpeg" alt="LeapFrog Learning Friends 100 Words Book" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Livre avec sons pour apprendre les mots</span>
+                            <span class="lang-en" style="display: none;">LeapFrog Learning Friends 100 Words Book</span>
+                        </div>
+                        <div class="item-note">
+                            <span class="lang-fr">Les produits en exemple sont bilingues !</span>
+                            <span class="lang-en" style="display: none;">Example products are bilingual!</span>
+                        </div>
+                        <a href="https://www.johnlewis.com/leapfrog-learning-friends-100-words-book/p3695695" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(4)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 12 -->
+                    <div class="item" data-item="12">
+                        <div class="item-image" style="display: flex; align-items: center; justify-content: center; font-size: 80px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">📚</div>
+                        <div class="item-name">
+                            <span class="lang-fr">Livres - Français & Anglais</span>
+                            <span class="lang-en" style="display: none;">Books - French & English</span>
+                        </div>
+                        <div class="item-note">
+                            <span class="lang-fr">📖 On a jamais trop de bouquins !</span>
+                            <span class="lang-en" style="display: none;">📖 You can never have too many books!</span>
+                        </div>
+                    </div>
+
+                    <!-- PUZZLES & LEARNING GROUP -->
+                    <!-- Item 5 -->
+                    <div class="item" data-item="5">
+                        <img src="images/Trieur de formes basiques.jpeg" alt="Shape Sorter Set" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Trieur de formes basiques (étoile, cercle, triangle...)</span>
+                            <span class="lang-en" style="display: none;">Shape Sorter Set</span>
+                        </div>
+                        <a href="https://www.johnlewis.com/john-lewis-shape-sorter-set/p112356437" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(5)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 7 -->
+                    <div class="item" data-item="7">
+                        <img src="images/Jeu d'association de couleurs, planche sensorielle.jpeg" alt="Bigjigs Sensory Board" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Jeu d'association de couleurs, planche sensorielle</span>
+                            <span class="lang-en" style="display: none;">Bigjigs Sensory Board (Colour sensory match toy)</span>
+                        </div>
+                        <a href="https://www.johnlewis.com/bigjigs-toys-sensory-board/p114191899" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(7)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 8 -->
+                    <div class="item" data-item="8">
+                        <img src="images/puzzle sons.jpg" alt="Melissa & Doug Wooden Farm Animal Sounds Puzzle" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Puzzle avec sons</span>
+                            <span class="lang-en" style="display: none;">Melissa & Doug Wooden Farm Animal Sounds Puzzle</span>
+                        </div>
+                        <a href="https://www.melissaanddoug.com/products/farm-sounds-puzzle" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(8)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- IMAGINATIVE PLAY GROUP -->
+                    <!-- Item 2 -->
+                    <div class="item" data-item="2">
+                        <img src="images/TV3004-Barista-Cafe-Shop-Coffee-Cakes-Bagel-Tea-Wooden-Toy_6.jpg" alt="Role play toys" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Jouets "jeu de rôle" (nourriture, métier, etc.)</span>
+                            <span class="lang-en" style="display: none;">Role play toys (toy foods/doctor set)</span>
+                        </div>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(2)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 6 -->
+                    <div class="item" data-item="6">
+                        <img src="images/rampes.jpeg" alt="Wooden Car Ramp" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Rampes simples pour petites voitures</span>
+                            <span class="lang-en" style="display: none;">Wooden Car Ramp (Rick rack cars)</span>
+                        </div>
+                        <a href="https://www.mabelandfox.com/products/just-bee-kids-wooden-car-ramp?variant=45576596291811" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(6)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 9 -->
+                    <div class="item" data-item="9">
+                        <img src="images/PL087-forest-stacker-wooden-bird-fox-bunny-bear-mouse-deer-squirrel-turtle-eco-plastic-free-baby-toy-cotton-bag_16.jpg" alt="Forest Stacker Bag" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Jouets à empiler</span>
+                            <span class="lang-en" style="display: none;">Forest Stacker Bag (Wooden animals)</span>
+                        </div>
+                        <a href="https://letoyvan.co.uk/collections/1-toys/products/forest-stacker-bag" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(9)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 11 -->
+                    <div class="item" data-item="11">
+                        <img src="images/N40735s.jpg" alt="Toadstool Play Set" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Jouets champignon</span>
+                            <span class="lang-en" style="display: none;">Toadstool Play Set</span>
+                        </div>
+                        <a href="https://www.jojomamanbebe.co.uk/style/st772355/n40735#n40735" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(11)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- BUILDING & ACTIVITIES GROUP -->
+                    <!-- Item 13 -->
+                    <div class="item" data-item="13">
+                        <img src="images/activity board.jpg" alt="Sensory Activity Board" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Tableau d'activités sensorielles</span>
+                            <span class="lang-en" style="display: none;">Sensory Activity Board</span>
+                        </div>
+                        <a href="https://www.amazon.co.uk/gp/aw/d/B0B6ZRY6X7" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(13)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 14 -->
+                    <div class="item" data-item="14">
+                        <img src="images/bag building set.jpg" alt="Building Blocks" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Blocs de construction</span>
+                            <span class="lang-en" style="display: none;">Building Blocks</span>
+                        </div>
+                        <a href="https://www.amazon.co.uk/gp/aw/d/B0083F2XCW" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(14)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Item 10 -->
+                    <div class="item" data-item="10">
+                        <img src="images/plateau avec rebords.jpg" alt="Tuff Tray and Stand" class="item-image">
+                        <div class="item-name">
+                            <span class="lang-fr">Plateau avec rebords et support</span>
+                            <span class="lang-en" style="display: none;">Tuff Tray and Stand</span>
+                        </div>
+                        <a href="https://www.amazon.co.uk/Easy-Shopping-Mixing-Plastic-Playing/dp/B0DTV5R5Y5" class="item-link" target="_blank">
+                            <span class="lang-fr">Voir un exemple →</span>
+                            <span class="lang-en" style="display: none;">View example →</span>
+                        </a>
+                        <div class="claim-section">
+                            <button class="claim-btn" onclick="claimItem(10)">
+                                <span class="lang-fr">J'lui offre ça !</span>
+                                <span class="lang-en" style="display: none;">I'll get this!</span>
+                            </button>
+                            <span class="claimed-by" style="display: none;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Vibe coded with ❤️ and Claude Code • v3.1.0
+        </div>
+    </div>
+
+    <!-- Claim Modal -->
+    <div class="modal-overlay" id="claimModal">
+        <div class="modal">
+            <div class="modal-title">
+                <span class="lang-fr">Qui réserve ce cadeau ?</span>
+                <span class="lang-en" style="display: none;">Who is claiming this gift?</span>
+            </div>
+            <select class="modal-select" id="nameSelect">
+                <option value="" class="lang-fr">-- Choisissez votre nom --</option>
+                <option value="" class="lang-en" style="display: none;">-- Choose your name --</option>
+                <option value="Oliv & Gé">Oliv & Gé</option>
+                <option value="Odic' & Sophie">Odic' & Sophie</option>
+                <option value="Adelou">Adelou</option>
+                <option value="Max">Max</option>
+                <option value="Paca">Paca</option>
+            </select>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">
+                    <span class="lang-fr">Annuler</span>
+                    <span class="lang-en" style="display: none;">Cancel</span>
+                </button>
+                <button class="modal-btn modal-btn-confirm" id="confirmClaimBtn" onclick="confirmClaim()">
+                    <span class="lang-fr">Réserver</span>
+                    <span class="lang-en" style="display: none;">Claim</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unclaim Modal -->
+    <div class="modal-overlay" id="unclaimModal">
+        <div class="modal">
+            <div class="modal-title">
+                <span class="lang-fr">Annuler cette réservation ?</span>
+                <span class="lang-en" style="display: none;">Cancel this claim?</span>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeUnclaimModal()">
+                    <span class="lang-fr">Non, garder</span>
+                    <span class="lang-en" style="display: none;">No, keep it</span>
+                </button>
+                <button class="modal-btn modal-btn-confirm" id="confirmUnclaimBtn" onclick="confirmUnclaim()">
+                    <span class="lang-fr">Oui, annuler</span>
+                    <span class="lang-en" style="display: none;">Yes, cancel</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbynABl2-VlXiWuFiCYoAh4Qrm4hCiaxbEbzIhU5CiBtiJV-MmQ9YugpQ6AwQXZZfyeYBA/exec';
+        let currentItemId = null;
+        let currentUnclaimItemId = null;
+        let currentLanguage = 'fr';
+
+        // Language switching
+        function setLanguage(lang) {
+            currentLanguage = lang;
+
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Hide all language elements
+            document.querySelectorAll('.lang-fr, .lang-en').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            // Show selected language
+            const className = '.lang-' + lang;
+            document.querySelectorAll(className).forEach(el => {
+                el.style.display = '';
+            });
+
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            // Get the button element (in case user clicked on text inside)
+            const button = event.target.closest('.tab-btn');
+            if (button) {
+                button.classList.add('active');
+            }
+        }
+
+        // Modal functions
+        function claimItem(itemId) {
+            currentItemId = itemId;
+            document.getElementById('claimModal').classList.add('active');
+            document.getElementById('nameSelect').value = '';
+        }
+
+        function closeModal() {
+            document.getElementById('claimModal').classList.remove('active');
+            currentItemId = null;
+        }
+
+        async function confirmClaim() {
+            const select = document.getElementById('nameSelect');
+            const name = select.value;
+
+            if (name) {
+                // Show loading overlay
+                document.getElementById('loadingOverlay').classList.add('active');
+
+                try {
+                    await fetch(SHEET_API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8'
+                        },
+                        body: JSON.stringify({
+                            itemId: currentItemId,
+                            claimedBy: name
+                        }),
+                        redirect: 'follow'
+                    });
+                    updateItemDisplay(currentItemId, name);
+                    closeModal();
+
+                    // Trigger confetti animation
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#667eea', '#764ba2', '#48bb78', '#ffd700']
+                    });
+                } catch (error) {
+                    console.error('Error claiming item:', error);
+                    alert('Erreur lors de la réservation. Veuillez réessayer.');
+                } finally {
+                    // Hide loading overlay
+                    document.getElementById('loadingOverlay').classList.remove('active');
+                }
+            } else {
+                select.focus();
+            }
+        }
+
+        // Close modal on overlay click
+        document.getElementById('claimModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Load claimed items from Google Sheets
+        async function loadClaims() {
+            try {
+                const response = await fetch(SHEET_API_URL);
+                const claims = await response.json();
+                Object.keys(claims).forEach(itemId => {
+                    updateItemDisplay(parseInt(itemId), claims[itemId]);
+                });
+            } catch (error) {
+                console.error('Error loading claims:', error);
+            }
+        }
+
+        // Unclaim an item - show modal
+        function unclaimItem(itemId) {
+            currentUnclaimItemId = itemId;
+            document.getElementById('unclaimModal').classList.add('active');
+        }
+
+        // Close unclaim modal
+        function closeUnclaimModal() {
+            document.getElementById('unclaimModal').classList.remove('active');
+            currentUnclaimItemId = null;
+        }
+
+        // Confirm unclaim
+        async function confirmUnclaim() {
+            if (currentUnclaimItemId !== null) {
+                // Show loading overlay
+                document.getElementById('loadingOverlay').classList.add('active');
+
+                try {
+                    await fetch(SHEET_API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8'
+                        },
+                        body: JSON.stringify({
+                            itemId: currentUnclaimItemId,
+                            claimedBy: null
+                        }),
+                        redirect: 'follow'
+                    });
+                    updateItemDisplay(currentUnclaimItemId, null);
+                    closeUnclaimModal();
+                } catch (error) {
+                    console.error('Error unclaiming item:', error);
+                    alert('Erreur lors de l\'annulation. Veuillez réessayer.');
+                } finally {
+                    // Hide loading overlay
+                    document.getElementById('loadingOverlay').classList.remove('active');
+                }
+            }
+        }
+
+        // Close unclaim modal on overlay click
+        document.getElementById('unclaimModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeUnclaimModal();
+            }
+        });
+
+        // Update item display
+        function updateItemDisplay(itemId, claimedBy) {
+            const item = document.querySelector(`[data-item="${itemId}"]`);
+            if (!item) return;
+
+            const button = item.querySelector('.claim-btn');
+            const claimedSpan = item.querySelector('.claimed-by');
+
+            if (claimedBy) {
+                item.classList.add('claimed');
+
+                // Clear button and add bilingual text
+                button.innerHTML = '';
+                const frSpan = document.createElement('span');
+                frSpan.className = 'lang-fr';
+                frSpan.textContent = 'Réservé';
+                frSpan.style.display = currentLanguage === 'fr' ? '' : 'none';
+
+                const enSpan = document.createElement('span');
+                enSpan.className = 'lang-en';
+                enSpan.textContent = 'Claimed';
+                enSpan.style.display = currentLanguage === 'en' ? '' : 'none';
+
+                button.appendChild(frSpan);
+                button.appendChild(enSpan);
+                button.classList.add('claimed-btn');
+                button.onclick = null;
+
+                // Set claimed by text with bilingual support
+                claimedSpan.innerHTML = '';
+                const frClaimedSpan = document.createElement('span');
+                frClaimedSpan.className = 'lang-fr';
+                frClaimedSpan.textContent = `par ${claimedBy}`;
+                frClaimedSpan.style.display = currentLanguage === 'fr' ? '' : 'none';
+
+                const enClaimedSpan = document.createElement('span');
+                enClaimedSpan.className = 'lang-en';
+                enClaimedSpan.textContent = `by ${claimedBy}`;
+                enClaimedSpan.style.display = currentLanguage === 'en' ? '' : 'none';
+
+                claimedSpan.appendChild(frClaimedSpan);
+                claimedSpan.appendChild(enClaimedSpan);
+                claimedSpan.style.display = 'inline';
+
+                // Add unclaim button
+                let unclaimBtn = item.querySelector('.unclaim-btn');
+                if (!unclaimBtn) {
+                    unclaimBtn = document.createElement('button');
+                    unclaimBtn.className = 'unclaim-btn';
+
+                    const frUnclaimSpan = document.createElement('span');
+                    frUnclaimSpan.className = 'lang-fr';
+                    frUnclaimSpan.textContent = 'Annuler';
+                    frUnclaimSpan.style.display = currentLanguage === 'fr' ? '' : 'none';
+
+                    const enUnclaimSpan = document.createElement('span');
+                    enUnclaimSpan.className = 'lang-en';
+                    enUnclaimSpan.textContent = 'Cancel';
+                    enUnclaimSpan.style.display = currentLanguage === 'en' ? '' : 'none';
+
+                    unclaimBtn.appendChild(frUnclaimSpan);
+                    unclaimBtn.appendChild(enUnclaimSpan);
+                    unclaimBtn.onclick = () => unclaimItem(itemId);
+                    claimedSpan.after(unclaimBtn);
+                }
+            } else {
+                item.classList.remove('claimed');
+
+                // Reset button with bilingual text
+                button.innerHTML = '';
+                const frSpan = document.createElement('span');
+                frSpan.className = 'lang-fr';
+                frSpan.textContent = 'J\'lui offre ça !';
+                frSpan.style.display = currentLanguage === 'fr' ? '' : 'none';
+
+                const enSpan = document.createElement('span');
+                enSpan.className = 'lang-en';
+                enSpan.textContent = 'I\'ll get this!';
+                enSpan.style.display = currentLanguage === 'en' ? '' : 'none';
+
+                button.appendChild(frSpan);
+                button.appendChild(enSpan);
+                button.classList.remove('claimed-btn');
+                button.onclick = () => claimItem(itemId);
+
+                claimedSpan.style.display = 'none';
+                claimedSpan.innerHTML = '';
+
+                const unclaimBtn = item.querySelector('.unclaim-btn');
+                if (unclaimBtn) unclaimBtn.remove();
+            }
+        }
+
+        // Load claims on page load
+        loadClaims();
+    </script>
+</body>
+</html>
